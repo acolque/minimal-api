@@ -1,8 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BirraRepo>(opt => opt.UseInMemoryDatabase("BirraList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc("v1", new OpenApiInfo()
+{
+    Description = "Una implementación de Minimal Api en Asp.Net 7 Core. Tomamos de ejemplo un CRUD de Birras!!",
+    Title = "Birras Minimal API",
+    Version = "v1"
+}));
+
 var app = builder.Build();
 
 app.MapGet("/ping", () => "pong");
@@ -57,4 +67,6 @@ app.MapDelete("birras/{id}", (int id, BirraRepo repo) =>
     return Results.Ok(birra);
 });
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.Run();
